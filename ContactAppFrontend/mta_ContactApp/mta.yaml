@@ -1,0 +1,55 @@
+ID: mta_ContactApp
+_schema-version: '2.1'
+parameters:
+  deploy_mode: html5-repo
+version: 0.0.1
+modules:
+  - name: mta_ContactApp_appRouter
+    type: approuter.nodejs
+    path: mta_ContactApp_appRouter
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: mta_ContactApp_html5_repo_runtime
+      - name: contactAppxsuaaMongo
+      - name: contactAppDestMongo
+  - name: mta_ContactApp_ui_deployer
+    type: com.sap.html5.application-content
+    path: mta_ContactApp_ui_deployer
+    requires:
+      - name: mta_ContactApp_html5_repo_host
+      - name: contactAppDestMongo
+    build-parameters:
+      requires:
+        - name: ContactApp
+          artifacts:
+            - './*'
+          target-path: resources/ContactApp
+  - name: ContactApp
+    type: html5
+    path: ContactApp
+    build-parameters:
+      builder: grunt
+resources:
+  - name: mta_ContactApp_html5_repo_runtime
+    parameters:
+      service-plan: app-runtime
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: mta_ContactApp_html5_repo_host
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: contactAppxsuaaMongo
+    parameters:
+      path: ./xs-security.json
+      service-plan: application
+      service: xsuaa
+    type: org.cloudfoundry.managed-service
+  - name: contactAppDestMongo
+    parameters:
+      service-plan: lite
+      service: destination
+    type: org.cloudfoundry.managed-service
