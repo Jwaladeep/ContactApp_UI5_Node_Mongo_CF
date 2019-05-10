@@ -75,5 +75,6 @@ exports.contactApp_deleteMany = function (req, res) {
 //get all
 exports.contactApp_getAll= function(req,res){
 	Contact.find(function(err,contact){if(err) return next(err);
+		res.header("Access-Control-Allow-Origin", "*");
 	res.send(contact);
 })};
